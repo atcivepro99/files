@@ -1,0 +1,206 @@
+/* ==========================================================================
+   Author's custom styles
+   ========================================================================== */
+.show-tablet {
+  display: none;
+}
+@media only screen and (max-width: 991px) {
+  .show-tablet {
+    display: block;
+  }
+}
+.hide-tablet {
+  display: block;
+}
+@media only screen and (max-width: 991px) {
+  .hide-tablet {
+    display: none;
+  }
+}
+.show-mob {
+  display: none;
+}
+@media only screen and (max-width: 767px) {
+  .show-mob {
+    display: block;
+  }
+}
+.hide-mob {
+  display: block;
+}
+@media only screen and (max-width: 767px) {
+  .hide-mob {
+    display: none;
+  }
+}
+.transition {
+  -webkit-transition: all 300ms;
+  -moz-transition: all 300ms;
+  -o-transition: all 300ms;
+  transition: all 300ms;
+}
+html,
+body {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+body {
+  font-size: 16px !important;
+  font-family: "Calibri", sans-serif !important;
+  background: #fff;
+  overflow-x: hidden;
+  color: #000 !important;
+  line-height: 1.4 !important;
+}
+.container-fluid {
+  max-width: 1198px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.page {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+}
+.page.word {
+  background: url('../img/bg-word.svg') center top no-repeat;
+  background-size: cover;
+}
+.page.excel {
+  background: url('../img/bg-excel.svg') center top no-repeat;
+  background-size: cover;
+}
+.pop-wrap {
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 30px;
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  display: none;
+}
+.pop-wrap.on {
+  display: flex;
+}
+.pop {
+  background: #fff;
+  width: 100%;
+  max-width: 680px;
+  padding: 45px 70px;
+}
+@media only screen and (max-width: 767px) {
+  .pop {
+    padding: 25px;
+  }
+}
+.pop-top {
+  display: flex;
+  align-items: center;
+  gap: 45px;
+}
+@media only screen and (max-width: 767px) {
+  .pop-top {
+    flex-direction: column;
+    gap: 30px;
+  }
+}
+.pop-top-title {
+  color: #000;
+  font-family: Calibri;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+.pop-text {
+  color: #000;
+  font-family: Calibri;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  margin: 45px 0;
+}
+@media only screen and (max-width: 767px) {
+  .pop-text {
+    margin: 30px 0;
+  }
+}
+.pop-btn {
+  width: 133px;
+  height: 44px;
+  background: #2B579A;
+  flex-shrink: 0;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFF !important;
+  text-decoration: none !important;
+  text-align: center;
+  font-family: Calibri;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+.pop-btn:hover {
+  -webkit-filter: brightness(1.1);
+  filter: brightness(1.1);
+}
+.excel .pop-btn {
+  width: 210px;
+  height: 44px;
+  flex-shrink: 0;
+  background: #2C7A4F;
+}
+* {
+  outline: none !important;
+}
+.dark:hover {
+  -webkit-filter: brightness(0.8);
+  filter: brightness(0.8);
+}
+.bright:hover {
+  -webkit-filter: brightness(1.1);
+  filter: brightness(1.1);
+}
+input:focus::-webkit-input-placeholder,
+textarea:focus::-webkit-input-placeholder {
+  opacity: 0;
+}
+input:focus:-moz-placeholder,
+textarea:focus:-moz-placeholder {
+  opacity: 0;
+}
+input:focus::-moz-placeholder,
+textarea:focus::-moz-placeholder {
+  opacity: 0;
+}
+input:focus:-ms-input-placeholder,
+textarea:focus:-ms-input-placeholder {
+  opacity: 0;
+}
+::-webkit-input-placeholder {
+  color: #fff;
+  opacity: 1;
+}
+:-moz-placeholder {
+  color: #fff;
+  opacity: 1;
+}
+::-moz-placeholder {
+  color: #fff;
+  opacity: 1;
+}
+:-ms-input-placeholder {
+  color: #fff;
+  opacity: 1;
+}
